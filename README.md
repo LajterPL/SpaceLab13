@@ -20,3 +20,6 @@ Klasyczny rougelike, tyle że w kosmosie. Bohater budzi się na stacji kosmiczne
 * Zamknięte przestrzenie - wymusza na graczu radzenie sobie z przeciwnikami poprzez walkę lub umiejętne ich omijanie, zamiast ciągłe uciekanie
 * Statystyki postaci w postaci liczbowej - jasne określenie tego w czym postać jest dobra, daje poczucie postępu 
 * Różnorodni przeciwnicy - przeciwnicy o różnych zachowaniach i słabościach, wchodzący też w interakcje między sobą, dodają do klimatu i są większy wyzwaniem taktycznym
+
+### Licencja
+Czcionka [Digital Disco](https://www.dafont.com/digital-disco.font) stworzona przez jeti ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)). [Więcej...](https://fontenddev.com/fonts/digital-disco/)
