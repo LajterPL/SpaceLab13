@@ -12,11 +12,7 @@ public class GamePane extends Table {
     public GamePane(BitmapFont font, NinePatchDrawable border) {
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = font;
-        gameLabel = new Label("34x48\n#######\n" +
-                "#     #\n" +
-                "#     #\n" +
-                "#     #\n" +
-                "###+###", labelStyle);
+        gameLabel = new Label("34x48", labelStyle);
         gameLabel.setWrap(true);
 
         this.add(gameLabel).expand().center().left().pad(5);
