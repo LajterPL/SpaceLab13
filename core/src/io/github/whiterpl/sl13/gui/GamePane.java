@@ -29,7 +29,7 @@ public class GamePane extends Table {
         StringBuilder sb = new StringBuilder();
 
         for (int iY = y - 18; iY < y + 18; iY++) {
-            for (int iX = x - 18; iX < x + 17; iX++) {
+            for (int iX = x - 16; iX < x + 17; iX++) {
                 Tile temp = activeRegion.getTile(iX, iY);
                 if (temp == null) sb.append(" ");
                 else {
