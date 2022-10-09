@@ -1,13 +1,10 @@
 package io.github.whiterpl.sl13.gui;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.badlogic.gdx.utils.Align;
 
 public class InfoPane extends Table {
 
@@ -26,9 +23,9 @@ public class InfoPane extends Table {
         listStyle.selection = border;
         inventoryList = new List<Label>(listStyle);
 
-        this.setDebug(true);
-        this.add(statLabel).expand().top().left();
+        this.background(border);
+        this.add(statLabel).expand().top().left().pad(5);
         this.row();
-        this.add(inventoryList).expand().top().left();
+        this.add(inventoryList).expand().top().left().pad(5);
     }
 }
