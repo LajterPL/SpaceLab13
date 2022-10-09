@@ -24,13 +24,13 @@ public class MyGdxGame extends ApplicationAdapter {
 				"abcdefghijklmnopqrstuvwxyz" +
 				"1234567890 " +
 				"\"!`?'.,;:()[]{}<>|/@\\^$-%+=#_&~*");
-		terminalBorder = new NinePatchDrawable(new NinePatch(new Texture(Gdx.files.internal("sprites/terminalborder.png")), 6, 6, 6, 6));
+		terminalBorder = new NinePatchDrawable(new NinePatch(new Texture(Gdx.files.internal("sprites/terminalborder.jpg")), 6, 6, 6, 6));
 		gameStage = new GameStage(guiFont, gameFont, terminalBorder);
 	}
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(0, 0, 0, 1);
+		ScreenUtils.clear(0.031F, 0, 0.106F, 1);
 		gameStage.draw();
 	}
 
