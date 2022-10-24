@@ -14,7 +14,7 @@ public class GamePane extends Table {
     public GamePane(BitmapFont font, NinePatchDrawable border) {
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = font;
-        gameScreen = new Label("34x48", labelStyle);
+        gameScreen = new Label("50x36", labelStyle);
         gameScreen.setWrap(true);
 
         this.add(gameScreen).expand().center().left().pad(12);
@@ -23,13 +23,13 @@ public class GamePane extends Table {
 
     public void updateGameScreen(Region activeRegion, int x, int y) {
 
-        x = x < 16 ? 16 : Math.min(x, Region.WIDTH - 17);
+        x = x < 25 ? 25 : Math.min(x, Region.WIDTH - 25);
         y = y < 18 ? 18 : Math.min(y, Region.HEIGHT - 18);
 
         StringBuilder sb = new StringBuilder();
 
         for (int iY = y - 18; iY < y + 18; iY++) {
-            for (int iX = x - 16; iX < x + 17; iX++) {
+            for (int iX = x - 25; iX < x + 25; iX++) {
                 Tile temp = activeRegion.getTile(iX, iY);
                 if (temp == null) sb.append(" ");
                 else {
