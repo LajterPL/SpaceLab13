@@ -8,6 +8,11 @@ public class Region {
 
     public Region() {
         tiles = new Tile[WIDTH][HEIGHT];
+        for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HEIGHT; y++) {
+                tiles[x][y] = new Tile();
+            }
+        }
     }
 
     public Tile[][] getTiles() {
