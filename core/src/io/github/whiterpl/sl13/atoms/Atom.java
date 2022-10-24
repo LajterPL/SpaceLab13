@@ -33,6 +33,10 @@ public class Atom {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -60,4 +64,6 @@ public class Atom {
             statuses.remove(status);
         }
     }
+
+
 }
