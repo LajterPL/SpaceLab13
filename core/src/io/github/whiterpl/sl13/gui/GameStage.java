@@ -18,10 +18,10 @@ public class GameStage extends Stage {
         this.addActor(rootTable);
 
         gamePane = new GamePane(gamefont, border);
-        rootTable.add(gamePane).expandY().width(Gdx.graphics.getHeight()).fill().top().left();
+        rootTable.add(gamePane).height(Gdx.graphics.getHeight() - 10).width(Gdx.graphics.getWidth()*0.8F).fill().top().left();
 
         infoPane = new InfoPane(guiFont, border);
-        rootTable.add(infoPane).expand().fill().top().left().padLeft(5);
+        rootTable.add(infoPane).expandX().height(Gdx.graphics.getHeight() - 10).fill().top().left().padLeft(5);
     }
 
     public void updateGameScreen(Region acticeRegion, int x, int y) {
