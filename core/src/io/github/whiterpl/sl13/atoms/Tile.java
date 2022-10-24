@@ -31,4 +31,16 @@ public class Tile {
     public List<Item> getItems() {
         return items;
     }
+
+    public void setStructure(Structure structure) {
+        this.structure = structure;
+    }
+
+    public void setMob(Mob mob) {
+        this.mob = mob;
+    }
+
+    public void setItems(List<Item> items) {
+        this.items = items;
+    }
 }
