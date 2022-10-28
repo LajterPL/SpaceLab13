@@ -3,17 +3,26 @@ package io.github.whiterpl.sl13.controls;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import io.github.whiterpl.sl13.gui.CharacterCreationStage;
+import io.github.whiterpl.sl13.gui.StageSwapper;
+import io.github.whiterpl.sl13.player.PlayerController;
 
 import java.util.Locale;
 
 public class CharacterCreationController implements InputProcessor {
 
     int selectionIndex;
-    CharacterCreationStage stage;
 
-    public CharacterCreationController(CharacterCreationStage stage) {
+    PlayerController playerController;
+    CharacterCreationStage stage;
+    StageSwapper stageSwapper;
+
+    public CharacterCreationController(PlayerController playerController, CharacterCreationStage stage, StageSwapper stageSwapper) {
+        this.playerController = playerController;
         this.stage = stage;
+        this.stageSwapper = stageSwapper;
         selectionIndex = 0;
+
+        stage.resetLabels();
     }
 
     @Override
@@ -52,6 +61,16 @@ public class CharacterCreationController implements InputProcessor {
                     return true;
                 }
                 break;
+            case Input.Keys.ENTER:
+                if (stage.getPointsToSpend() == 0) {
+                    stageSwapper.setPlayerController(stage.getPlayerController());
+                    stageSwapper.changeStage(StageSwapper.State.GAME);
+                    return true;
+                }
+                break;
+            case Input.Keys.ESCAPE:
+                stageSwapper.changeStage(StageSwapper.State.MAIN_MENU);
+                return true;
             default:
                 return false;
         }
