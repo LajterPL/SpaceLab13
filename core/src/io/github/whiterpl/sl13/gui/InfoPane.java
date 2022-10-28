@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import io.github.whiterpl.sl13.player.PlayerController;
 import io.github.whiterpl.sl13.player.Skill;
 
 public class InfoPane extends Table {
@@ -39,6 +40,18 @@ public class InfoPane extends Table {
         sb.append(String.format("TGH: %-4d STR: %-4d TKR: %-4d%n", skills[Skill.TOUGHNESS.getIndex()], skills[Skill.STRENGTH.getIndex()], skills[Skill.TINKERING.getIndex()]));
         sb.append(String.format("IDT:  %-4d HAK: %-4d NEG: %-4d%n", skills[Skill.IDENTIFYING.getIndex()], skills[Skill.HACKING.getIndex()], skills[Skill.NEGOTIATION.getIndex()]));
         statLabel.setText(sb.toString());
+    }
+
+    public void updateStats(PlayerController playerController) {
+        updateStats(
+                playerController.getName(),
+                playerController.getCurrentHp(),
+                playerController.getMaxHp(),
+                playerController.getCurrentSp(),
+                playerController.getMaxSp(),
+                playerController.getCharacterLevel(),
+                playerController.getCurrentExp(),
+                playerController.getSkills());
     }
 
     public void appendMessage(String message) {
