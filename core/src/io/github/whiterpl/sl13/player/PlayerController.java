@@ -25,13 +25,14 @@ public class PlayerController {
 
     protected List<Item> equipment;
 
-    public final Mob PLAYER;
+    public final Mob player;
 
     int x;
     int y;
 
     public PlayerController() {
-        this.PLAYER = new Mob("Player", "This is you.", '@', "FFFFFFFF");
+        this.player = new Mob("Player", "This is you.", '@', "FFFFFFFF");
+        skills = new short[9];
     }
 
     public PlayerController(String name, short[] skills) {
@@ -52,7 +53,7 @@ public class PlayerController {
     public PlayerController(String name, short maxHp, short currentHp, short maxSp, short currentSp, int credits, short characterLevel, int currentExp, short[] skills, List<Item> equipment) {
         this();
         this.name = name;
-        this.PLAYER.setName(name);
+        this.player.setName(name);
         this.maxHp = maxHp;
         this.currentHp = currentHp;
         this.maxSp = maxSp;
@@ -62,6 +63,58 @@ public class PlayerController {
         this.currentExp = currentExp;
         this.skills = skills;
         this.equipment = equipment;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public short getMaxHp() {
+        return maxHp;
+    }
+
+    public short getCurrentHp() {
+        return currentHp;
+    }
+
+    public short getMaxSp() {
+        return maxSp;
+    }
+
+    public short getCurrentSp() {
+        return currentSp;
+    }
+
+    public int getCredits() {
+        return credits;
+    }
+
+    public short getCharacterLevel() {
+        return characterLevel;
+    }
+
+    public int getCurrentExp() {
+        return currentExp;
+    }
+
+    public short[] getSkills() {
+        return skills;
+    }
+
+    public List<Item> getEquipment() {
+        return equipment;
+    }
+
+    public Mob getPlayer() {
+        return player;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public void placePlayer(Region region, int x, int y) {
