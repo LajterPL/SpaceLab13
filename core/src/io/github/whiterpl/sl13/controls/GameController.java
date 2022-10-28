@@ -4,16 +4,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import io.github.whiterpl.sl13.gui.GameStage;
+import io.github.whiterpl.sl13.gui.StageSwapper;
 import io.github.whiterpl.sl13.player.PlayerController;
 
-public class KeyboardController implements InputProcessor {
+public class GameController implements InputProcessor {
 
     PlayerController playerController;
     GameStage gameStage;
+    StageSwapper stageSwapper;
 
-    public KeyboardController(PlayerController playerController, GameStage gameStage) {
+    public GameController(PlayerController playerController, GameStage gameStage, StageSwapper stageSwapper) {
         this.playerController = playerController;
         this.gameStage = gameStage;
+        this.stageSwapper = stageSwapper;
     }
 
     @Override
@@ -60,4 +63,6 @@ public class KeyboardController implements InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         return false;
     }
+
+
 }
