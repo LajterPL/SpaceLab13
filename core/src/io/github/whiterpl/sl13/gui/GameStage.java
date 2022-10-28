@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import io.github.whiterpl.sl13.atoms.Region;
+import io.github.whiterpl.sl13.player.PlayerController;
 
 public class GameStage extends Stage {
     private GamePane gamePane;
@@ -26,6 +27,10 @@ public class GameStage extends Stage {
 
     public void updateGameScreen(Region acticeRegion, int x, int y) {
         gamePane.updateGameScreen(acticeRegion, x, y);
+    }
+
+    public void updateStats(PlayerController playerController) {
+        infoPane.updateStats(playerController);
     }
 
 }
