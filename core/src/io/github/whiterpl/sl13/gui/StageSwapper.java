@@ -42,6 +42,7 @@ public class StageSwapper {
                 break;
             case GAME:
                 gameStage.updateStats(playerController);
+                gameStage.updateGameScreen(playerController.getActiveRegion(), playerController.getPlayer().getX(), playerController.getPlayer().getY());
                 Gdx.input.setInputProcessor(new GameController(playerController, gameStage, this));
                 break;
         }
