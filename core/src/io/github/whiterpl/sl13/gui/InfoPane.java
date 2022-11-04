@@ -44,14 +44,14 @@ public class InfoPane extends Table {
 
     public void updateStats(PlayerController playerController) {
         updateStats(
-                playerController.getName(),
-                playerController.getCurrentHp(),
-                playerController.getMaxHp(),
-                playerController.getCurrentSp(),
-                playerController.getMaxSp(),
+                playerController.getPlayer().getName(),
+                playerController.getPlayer().getCurrentHp(),
+                playerController.getPlayer().getMaxHp(),
+                playerController.getPlayer().getCurrentSp(),
+                playerController.getPlayer().getMaxSp(),
                 playerController.getCharacterLevel(),
                 playerController.getCurrentExp(),
-                playerController.getSkills());
+                playerController.getPlayer().getSkills());
     }
 
     public void appendMessage(String message) {
