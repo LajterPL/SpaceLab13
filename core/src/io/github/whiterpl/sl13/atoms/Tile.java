@@ -43,4 +43,9 @@ public class Tile {
     public void setItems(List<Item> items) {
         this.items = items;
     }
+
+    public boolean blocksPassage() {
+        if (structure != null && structure.statuses.contains(Status.BLOCK_PASSING)) return true;
+        return mob != null && mob.statuses.contains(Status.BLOCK_PASSING);
+    }
 }
