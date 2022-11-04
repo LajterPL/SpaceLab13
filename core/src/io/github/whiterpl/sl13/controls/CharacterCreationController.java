@@ -68,6 +68,11 @@ public class CharacterCreationController implements InputProcessor {
                     return true;
                 }
                 break;
+            case Input.Keys.R:
+                if (selectionIndex != 0) {
+                    stage.setRandomPoints();
+                }
+                break;
             case Input.Keys.ESCAPE:
                 stageSwapper.changeStage(StageSwapper.State.MAIN_MENU);
                 return true;

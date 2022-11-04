@@ -7,11 +7,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import io.github.whiterpl.sl13.player.PlayerController;
 
+import java.util.Random;
+
 public class CharacterCreationStage extends Stage {
     private final Label nameLabel;
     private SkillTable[] skillTables;
     private Label pointsLabel;
     int pointsToSpend;
+
+    private final Random numberGen = new Random();
 
     public CharacterCreationStage(BitmapFont font, NinePatchDrawable border) {
 
@@ -70,6 +74,10 @@ public class CharacterCreationStage extends Stage {
         return new PlayerController(name, skills);
     }
 
+    public int getPointsToSpend() {
+        return pointsToSpend;
+    }
+
     public void addPoint(int selectionIndex) {
         if (selectionIndex == 0 || pointsToSpend == 0) return;
         int groupIndex = (int) Math.floor((selectionIndex - 1)/3f);
@@ -86,6 +94,29 @@ public class CharacterCreationStage extends Stage {
         pointsToSpend++;
         pointsLabel.setText(String.format("Points to spend: %2d", pointsToSpend));
         skillTables[groupIndex].removePoint((selectionIndex - 1) - (3*groupIndex));
+    }
+
+    public void setRandomPoints() {
+
+        for (SkillTable skillTable : skillTables) {
+            int pointsLeft = 12;
+
+
+            int randomNumber = numberGen.nextInt(9);
+            skillTable.updateSkill(0, (short) randomNumber);
+
+            pointsLeft -= randomNumber;
+            randomNumber = numberGen.nextInt(Math.min(9, pointsLeft));
+
+            skillTable.updateSkill(1, (short) randomNumber);
+
+            pointsLeft -= randomNumber;
+
+            skillTable.updateSkill(2, (short) pointsLeft);
+        }
+
+        pointsToSpend = 0;
+        pointsLabel.setText(String.format("Points to spend: %2d", pointsToSpend));
     }
 
     public void addCharToName(char c) {
@@ -119,5 +150,16 @@ public class CharacterCreationStage extends Stage {
         }
 
         nameLabel.setText(nameLabel.getText().toString());
+    }
+
+    public void resetLabels() {
+        nameLabel.setText(nameLabel.getText().replace("ffffff", "f2ee02").toString() + " ");
+        nameLabel.setText(nameLabel.getText().substring(0, nameLabel.getText().length-1));
+
+        for (int category = 0; category < 3; category++) {
+            for (int skill = 0; skill < 3; skill++) {
+                skillTables[category].unselectSkill(skill);
+            }
+        }
     }
 }
