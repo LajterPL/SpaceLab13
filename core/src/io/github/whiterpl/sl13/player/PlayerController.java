@@ -1,9 +1,10 @@
 package io.github.whiterpl.sl13.player;
 
-import io.github.whiterpl.sl13.atoms.Item;
-import io.github.whiterpl.sl13.atoms.Mob;
-import io.github.whiterpl.sl13.atoms.Region;
-import io.github.whiterpl.sl13.atoms.RegionGenerator;
+import io.github.whiterpl.sl13.atoms.item.Item;
+import io.github.whiterpl.sl13.atoms.mob.Mob;
+import io.github.whiterpl.sl13.atoms.mob.MobGenerator;
+import io.github.whiterpl.sl13.atoms.region.Region;
+import io.github.whiterpl.sl13.atoms.region.RegionGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +29,10 @@ public class PlayerController {
     public PlayerController(String name, short[] skills) {
         this(
                 name,
-                Mob.calculateMaxHp(skills[Skill.TOUGHNESS.getIndex()]),
-                Mob.calculateMaxHp(skills[Skill.TOUGHNESS.getIndex()]),
-                Mob.calculateMaxSp(skills[Skill.WILLPOWER.getIndex()]),
-                Mob.calculateMaxSp(skills[Skill.WILLPOWER.getIndex()]),
+                MobGenerator.calculateMaxHp(skills[Skill.TOUGHNESS.getIndex()]),
+                MobGenerator.calculateMaxHp(skills[Skill.TOUGHNESS.getIndex()]),
+                MobGenerator.calculateMaxSp(skills[Skill.WILLPOWER.getIndex()]),
+                MobGenerator.calculateMaxSp(skills[Skill.WILLPOWER.getIndex()]),
                 0,
                 (short) 1,
                 0,
