@@ -66,13 +66,13 @@ public class InfoPane extends Table {
 
         if (messageLog.getText().toString().split("\n").length >= 54) {
             for (int i = 0; i < messageLog.getText().toString().split("\n").length - 54; i++) {
-                System.out.println(messageLog.getText().indexOf("\n", 1));
                 messageLog.setText(messageLog.getText().substring(messageLog.getText().indexOf("\n", 1)));
             }
         }
 
         if (messageLog.getText().toString() != "")  messageLog.setText(messageLog.getText().append('\n'));
 
-        messageLog.setText(messageLog.getText().append(message));
+        messageLog.setText(messageLog.getText().append(message).toString() + " ");
+        messageLog.setText(messageLog.getText().substring(0, messageLog.getText().length-1));
     }
 }
