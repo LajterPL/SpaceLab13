@@ -1,9 +1,14 @@
-package io.github.whiterpl.sl13.atoms;
+package io.github.whiterpl.sl13.atoms.mob;
 
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Gdx;
+import io.github.whiterpl.sl13.atoms.*;
+import io.github.whiterpl.sl13.atoms.item.Item;
+import io.github.whiterpl.sl13.atoms.region.Region;
+import io.github.whiterpl.sl13.atoms.region.Tile;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
 
 public class Mob extends Atom {
 
@@ -123,51 +128,74 @@ public class Mob extends Atom {
         this.nextUpdateTurn = nextUpdateTurn;
     }
 
-    // STATIC METHODS
-
-    public static short calculateMaxHp(short toughness) {
-        return (short) (50 + toughness * 10);
-    }
-
-    public static short calculateMaxSp(short willpower) {
-        return (short) (50 + willpower * 10);
-    }
-
     // METHODS
 
     public void placeMob(Region region, int x, int y) {
         Tile selectedTile = region.getTile(x, y);
 
         if (selectedTile.blocksPassage()) throw new IllegalArgumentException();
-        else if (selectedTile.mob != null) throw new IllegalArgumentException();
+        else if (selectedTile.getMob() != null) throw new IllegalArgumentException();
         else {
             this.x = x;
             this.y = y;
-            selectedTile.mob = this;
+            selectedTile.setMob(this);
+            region.addToQueue(this);
         }
     }
 
     public boolean move(Region region, Direction direction) {
+        int xMod, yMod;
+
         switch (direction) {
             case NORTH:
+            case NORTH_EAST:
+            case NORTH_WEST:
                 if (this.y == 0) return false;
-
-                Tile selectedTile = region.getTile(this.x, this.y - 1);
-                if (selectedTile.blocksPassage()) return false;
-
-                Mob tempMob = null;
-                if (selectedTile.mob != null) tempMob = selectedTile.mob;
-
-                selectedTile.mob = this;
-                region.getTile(this.x, this.y).mob = null;
-
-                if (tempMob != null) region.getTile(this.x, this.y).mob = tempMob;
-
-                this.y = this.y - 1;
-
-                return true;
+                yMod = -1;
+                break;
+            case SOUTH:
+            case SOUTH_EAST:
+            case SOUTH_WEST:
+                if (this.y == Region.HEIGHT) return false;
+                yMod = 1;
+                break;
+            default:
+                yMod = 0;
         }
 
-        return false;
+        switch (direction) {
+            case WEST:
+            case NORTH_WEST:
+            case SOUTH_WEST:
+                if (this.x == 0) return false;
+                xMod = -1;
+                break;
+            case EAST:
+            case NORTH_EAST:
+            case SOUTH_EAST:
+                if (this.x == Region.WIDTH) return false;
+                xMod = 1;
+                break;
+            default:
+                xMod = 0;
+        }
+
+        Tile selectedTile = region.getTile(this.x + xMod, this.y + yMod);
+        if (selectedTile.blocksPassage()) return false;
+
+        Mob tempMob = null;
+        if (selectedTile.getMob() != null) tempMob = selectedTile.getMob();
+
+        region.getTile(this.x, this.y).setMob(null);
+        selectedTile.setMob(this);
+
+        if (tempMob != null) region.getTile(this.x, this.y).setMob(tempMob);
+
+        this.x = this.x + xMod;
+        this.y = this.y + yMod;
+
+        return true;
     }
+
+
 }

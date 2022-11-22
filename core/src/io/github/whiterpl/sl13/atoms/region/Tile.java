@@ -1,4 +1,9 @@
-package io.github.whiterpl.sl13.atoms;
+package io.github.whiterpl.sl13.atoms.region;
+
+import io.github.whiterpl.sl13.atoms.Status;
+import io.github.whiterpl.sl13.atoms.item.Item;
+import io.github.whiterpl.sl13.atoms.mob.Mob;
+import io.github.whiterpl.sl13.atoms.structure.Structure;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +50,7 @@ public class Tile {
     }
 
     public boolean blocksPassage() {
-        if (structure != null && structure.statuses.contains(Status.BLOCK_PASSING)) return true;
-        return mob != null && mob.statuses.contains(Status.BLOCK_PASSING);
+        if (structure != null && structure.hasStatus(Status.BLOCK_PASSING)) return true;
+        return mob != null && mob.hasStatus(Status.BLOCK_PASSING);
     }
 }
