@@ -7,41 +7,45 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
-import io.github.whiterpl.sl13.gui.GameStage;
+import io.github.whiterpl.sl13.gui.StageSwapper;
 
 public class MyGdxGame extends ApplicationAdapter {
 
-	GameStage gameStage;
 	BitmapFont guiFont;
 	BitmapFont gameFont;
 	NinePatchDrawable terminalBorder;
+	StageSwapper stageSwapper;
 
 	@Override
 	public void create () {
 		guiFont = new BitmapFont(Gdx.files.internal("font/digitaldisco-32.fnt"));
 		gameFont = new BitmapFont(Gdx.files.internal("font/digitaldisco-32-fixed-width.fnt"));
+		gameFont.getData().markupEnabled = true;
+		guiFont.getData().markupEnabled = true;
 		gameFont.setFixedWidthGlyphs("ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
 				"abcdefghijklmnopqrstuvwxyz" +
 				"1234567890 " +
 				"\"!`?'.,;:()[]{}<>|/@\\^$-%+=#_&~*");
 		terminalBorder = new NinePatchDrawable(new NinePatch(new Texture(Gdx.files.internal("sprites/terminalborder.jpg")), 6, 6, 6, 6));
-		gameStage = new GameStage(guiFont, gameFont, terminalBorder);
+
+		stageSwapper = new StageSwapper(guiFont, gameFont, terminalBorder);
+
 	}
 
 	@Override
 	public void render () {
 		ScreenUtils.clear(0.031F, 0, 0.106F, 1);
-		gameStage.draw();
+		stageSwapper.draw();
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		gameStage.getViewport().update(width, height, true);
+		stageSwapper.resize(width, height);
 	}
 
 	@Override
 	public void dispose () {
-		gameStage.dispose();
+		stageSwapper.dispose();
 		guiFont.dispose();
 	}
 }
