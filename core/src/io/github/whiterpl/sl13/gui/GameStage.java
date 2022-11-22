@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import io.github.whiterpl.sl13.atoms.Region;
+import io.github.whiterpl.sl13.atoms.region.Region;
 import io.github.whiterpl.sl13.player.PlayerController;
 
 public class GameStage extends Stage {
@@ -31,6 +31,10 @@ public class GameStage extends Stage {
 
     public void updateStats(PlayerController playerController) {
         infoPane.updateStats(playerController);
+    }
+
+    public void appendMessage(String message) {
+        infoPane.appendMessage(message);
     }
 
 }
