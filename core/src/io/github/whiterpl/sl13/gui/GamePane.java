@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import io.github.whiterpl.sl13.atoms.Region;
-import io.github.whiterpl.sl13.atoms.Tile;
+import io.github.whiterpl.sl13.atoms.region.Region;
+import io.github.whiterpl.sl13.atoms.region.Tile;
 
 public class GamePane extends Table {
 
