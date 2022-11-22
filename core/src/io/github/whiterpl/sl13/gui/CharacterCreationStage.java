@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import io.github.whiterpl.sl13.atoms.mob.MobGenerator;
 import io.github.whiterpl.sl13.player.PlayerController;
 
 import java.util.Random;
@@ -32,8 +33,9 @@ public class CharacterCreationStage extends Stage {
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = font;
 
+        String randomName = MobGenerator.getRandomHumanName();
 
-        nameLabel = new Label("[#f2ee02]Name[]: Janek", labelStyle);
+        nameLabel = new Label("[#f2ee02]Name[]: " + randomName, labelStyle);
         rootTable.add(nameLabel).height(32).expandX().top().center().padTop(30).colspan(3);
         rootTable.row();
 
@@ -111,8 +113,16 @@ public class CharacterCreationStage extends Stage {
             skillTable.updateSkill(1, (short) randomNumber);
 
             pointsLeft -= randomNumber;
+            randomNumber = pointsLeft;
 
-            skillTable.updateSkill(2, (short) pointsLeft);
+            if (pointsLeft > 9) {
+                for (int i = 0; i < pointsLeft - 9; i++) {
+                    randomNumber--;
+                    skillTable.addPoint(numberGen.nextInt(1));
+                }
+            }
+
+            skillTable.updateSkill(2, (short) randomNumber);
         }
 
         pointsToSpend = 0;
