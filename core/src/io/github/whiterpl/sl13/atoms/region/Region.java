@@ -27,9 +27,19 @@ public class Region {
         lastUpdateTurn = 0;
     }
 
+    //GETTERS & SETTERS
+
     public Tile[][] getTiles() {
         return tiles;
     }
+
+    // STATIC METHOD
+
+    public static float getDistance(int x1, int y1, int x2, int y2) {
+        return (float) Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
+
+    // METHODS
 
     public Tile getTile(int x, int y) {
         if (x < WIDTH && y < HEIGHT) {
@@ -37,18 +47,27 @@ public class Region {
         } else return null;
     }
 
-    // METHODS
-
     public void addToQueue(Mob mob) {
         mob.setNextUpdateTurn(this.lastUpdateTurn + mob.getActionDelay());
         actionQueue.add(mob);
     }
 
     public void advanceQueue(PlayerController playerController) {
-        while(actionQueue.peek() != playerController.player) {
 
+        while(actionQueue.peek() != playerController.player) {
+            Mob activeMob = actionQueue.peek();
+            assert activeMob != null;
+            activeMob.addDelay();
+            actionQueue.poll().act(this);
+            actionQueue.add(activeMob);
         }
+
+        actionQueue.poll();
+        playerController.getPlayer().addDelay();
+        actionQueue.add(playerController.getPlayer());
     }
+
+
 
 
 }
