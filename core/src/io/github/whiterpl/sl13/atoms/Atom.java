@@ -1,22 +1,22 @@
 package io.github.whiterpl.sl13.atoms;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Atom {
     protected String name;
     protected String description;
     protected char symbol;
     protected String colorString;
-    protected List<Status> statuses;
+    protected Set<Status> statuses;
 
     public Atom(String name, String description, char symbol, String colorString, Status... statuses) {
         this.name = name;
         this.description = description;
         this.symbol = symbol;
         this.colorString = colorString;
-        this.statuses = new ArrayList<>();
+        this.statuses = new HashSet<>();
 
         this.statuses.addAll(Arrays.asList(statuses));
     }
@@ -63,6 +63,10 @@ public class Atom {
         if(this.hasStatus(status)) {
             statuses.remove(status);
         }
+    }
+
+    public Set<Status> getStatuses() {
+        return statuses;
     }
 
 
