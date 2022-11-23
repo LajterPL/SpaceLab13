@@ -95,9 +95,13 @@ public class GameController implements InputProcessor {
     }
 
     private void movePlayer(Direction direction) {
+
+        playerController.getActiveRegion().advanceQueue(playerController);
+
         if (!playerController.getPlayer().move(playerController.getActiveRegion(), direction)) {
             gameStage.appendMessage("[#FF0000]Something blocks your path![]");
         }
+
         gameStage.updateGameScreen(playerController.getActiveRegion(), playerController.getPlayer().getX(), playerController.getPlayer().getY());
         gameStage.updateStats(playerController);
     }
