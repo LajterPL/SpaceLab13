@@ -6,12 +6,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import io.github.whiterpl.sl13.player.PlayerController;
-import io.github.whiterpl.sl13.player.Skill;
+import io.github.whiterpl.sl13.atoms.mob.Skill;
 
 public class InfoPane extends Table {
 
     protected Label statLabel;
     protected Label messageLog;
+
+    private boolean isTextHidden;
+    private String hiddenText;
 
     public InfoPane(BitmapFont font, NinePatchDrawable border) {
 
@@ -28,6 +31,10 @@ public class InfoPane extends Table {
         this.add(statLabel).expandX().height(Gdx.graphics.getHeight()*0.2F).top().left().pad(5);
         this.row();
         this.add(messageLog).expand().bottom().left().pad(5);
+    }
+
+    public boolean isTextHidden() {
+        return isTextHidden;
     }
 
     public void updateStats(String name, short hp, short maxHp, short sp, short maxSp, short characterLvl, int exp, short[] skills) {
@@ -57,6 +64,11 @@ public class InfoPane extends Table {
     public void appendMessage(String message) {
 
         int slimChars = (int) message.chars().filter(c -> "ilILt.',;:!?-~ ".contains(String.valueOf((char) c))).count();
+
+        if (message.startsWith("[#")) {
+            slimChars += 2 * (message.indexOf(']') + 1) + 2;
+        }
+
         if (message.length() - slimChars/2 > 33) {
             int slimCharsAtBeginning = (int) (message.chars().limit(33).filter(c -> "ilILt.',;:!?-~ ".contains(String.valueOf((char) c))).count()/2);
             appendMessage(message.substring(0, 33 + slimCharsAtBeginning));
@@ -74,5 +86,20 @@ public class InfoPane extends Table {
 
         messageLog.setText(messageLog.getText().append(message).toString() + " ");
         messageLog.setText(messageLog.getText().substring(0, messageLog.getText().length-1));
+    }
+
+    public void clearMessages() {
+        messageLog.setText("");
+    }
+
+    public void hideMessages() {
+        hiddenText = messageLog.getText().toString();
+        clearMessages();
+        isTextHidden = true;
+    }
+
+    public void showMessages() {
+        messageLog.setText(hiddenText);
+        isTextHidden = false;
     }
 }

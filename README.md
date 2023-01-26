@@ -22,7 +22,7 @@ Klasyczny rougelike, tyle że w kosmosie. Bohater budzi się na stacji kosmiczne
 * **Różnorodni przeciwnicy** - przeciwnicy o różnych zachowaniach i słabościach, wchodzący też w interakcje między sobą, dodają do klimatu i są większy wyzwaniem taktycznym
 
 ### Interfejs
-![Mobki ruszają się z różną prędkością](https://i.ibb.co/ZxgSjHp/ss.png)
+[Interfejs gry](https://i.imgur.com/JBhjzHY.png)
 
 ### Sterowanie
 Numpad - poruszanie się po mapie

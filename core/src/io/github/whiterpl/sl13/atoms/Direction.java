@@ -4,15 +4,23 @@ import java.util.Random;
 
 public enum Direction {
 
-    NORTH,
-    NORTH_EAST,
-    EAST,
-    SOUTH_EAST,
-    SOUTH,
-    SOUTH_WEST,
-    WEST,
-    NORTH_WEST,
-    NONE;
+    NORTH(0, -1),
+    NORTH_EAST(1, -1),
+    EAST(1, 0),
+    SOUTH_EAST(1, 1),
+    SOUTH(0, 1),
+    SOUTH_WEST(-1, 1),
+    WEST(-1, 0),
+    NORTH_WEST(-1, -1),
+    NONE(0, 0);
+
+    private int xMod;
+    private int yMod;
+
+    Direction(int xMod, int yMod) {
+        this.xMod = xMod;
+        this.yMod = yMod;
+    }
 
     private static final Random randomGen = new Random();
 
@@ -28,5 +36,21 @@ public enum Direction {
             case 7: return NORTH_WEST;
             default: return NONE;
         }
+    }
+
+    public static int getXMod(Direction direction) {
+        return direction.xMod;
+    }
+
+    public static int getYMod(Direction direction) {
+        return direction.yMod;
+    }
+
+    public int getXMod() {
+        return Direction.getXMod(this);
+    }
+
+    public int getYMod() {
+        return Direction.getYMod(this);
     }
 }

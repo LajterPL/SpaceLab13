@@ -23,6 +23,9 @@ public class GamePane extends Table {
 
     public void updateGameScreen(Region activeRegion, int x, int y) {
 
+        int oldX = x;
+        int oldY = y;
+
         x = x < 25 ? 25 : Math.min(x, Region.WIDTH - 25);
         y = y < 18 ? 18 : Math.min(y, Region.HEIGHT - 18);
 
@@ -52,7 +55,8 @@ public class GamePane extends Table {
                         sb.append(temp.getItems().get(0).getSymbol());
                         sb.append("[]");
                     } else {
-                        sb.append(" ");
+                        if (iY == oldY && iX == oldX) sb.append("[#f2ee02]X[]");
+                        else sb.append(" ");
                     }
                 }
             }

@@ -29,3 +29,4 @@ Stichus
 Nikola
 Velledyn
 Choco
+Stimmer

@@ -7,14 +7,28 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import io.github.whiterpl.sl13.gui.InfoPane;
 import io.github.whiterpl.sl13.gui.StageSwapper;
+import io.github.whiterpl.sl13.player.PlayerController;
 
-public class MyGdxGame extends ApplicationAdapter {
+public class Game extends ApplicationAdapter {
 
-	BitmapFont guiFont;
-	BitmapFont gameFont;
-	NinePatchDrawable terminalBorder;
-	StageSwapper stageSwapper;
+	private static Game gameInstance;
+
+	private BitmapFont guiFont;
+	private BitmapFont gameFont;
+	private NinePatchDrawable terminalBorder;
+	private StageSwapper stageSwapper;
+
+	public static Game getInstance() {
+		if (gameInstance == null) gameInstance = new Game();
+		return gameInstance;
+	}
+	public static PlayerController getPlayerController() {
+		return gameInstance.stageSwapper.getPlayerController();
+	}
+	public static InfoPane getInfoPane() { return getInstance().stageSwapper.getGameStage().getInfoPane();}
+	public static StageSwapper getStageSwapper() { return getInstance().stageSwapper;}
 
 	@Override
 	public void create () {

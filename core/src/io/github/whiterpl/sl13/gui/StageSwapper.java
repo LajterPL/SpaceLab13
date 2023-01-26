@@ -38,11 +38,12 @@ public class StageSwapper {
                 Gdx.input.setInputProcessor(new MainMenuController(mainMenuStage, this));
                 break;
             case CHARACTER_CREATION:
+                characterCreationStage.resetAll();
                 Gdx.input.setInputProcessor(new CharacterCreationController(playerController, characterCreationStage, this));
                 break;
             case GAME:
-                gameStage.updateStats(playerController);
-                gameStage.updateGameScreen(playerController.getActiveRegion(), playerController.getPlayer().getX(), playerController.getPlayer().getY());
+                gameStage.getInfoPane().updateStats(playerController);
+                gameStage.getGamePane().updateGameScreen(playerController.getActiveRegion(), playerController.getPlayer().getX(), playerController.getPlayer().getY());
                 Gdx.input.setInputProcessor(new GameController(playerController, gameStage, this));
                 break;
         }
