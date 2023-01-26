@@ -49,8 +49,20 @@ public class Tile {
         this.items = items;
     }
 
-    public boolean blocksPassage() {
-        if (structure != null && structure.hasStatus(Status.BLOCK_PASSING)) return true;
-        return mob != null && mob.hasStatus(Status.BLOCK_PASSING);
+    public void addItem(Item item) {
+        this.items.add(item);
+    }
+
+    public void removeItem(Item item) {
+        this.items.remove(item);
+    }
+
+    public boolean hasStatus(Status status) {
+        if (structure != null && structure.hasStatus(status)) return true;
+        if (mob != null && mob.hasStatus(status)) return true;
+        for (Item i : items) {
+            if (i.hasStatus(status)) return true;
+        }
+        return false;
     }
 }
