@@ -1,4 +1,4 @@
-package io.github.whiterpl.sl13.player;
+package io.github.whiterpl.sl13.atoms.mob;
 
 public enum Skill {
     MELEE(0),
@@ -20,6 +20,4 @@ public enum Skill {
     public int getIndex() {
         return this.value;
     }
-
-
 }
