@@ -25,4 +25,8 @@ public class MobGenerator {
     public static short calculateMaxSp(short willpower) {
         return (short) (50 + willpower * 10);
     }
+
+    public static int calculateMaxWeightLimit(short labour) {
+        return 25 + labour * 5;
+    }
 }
