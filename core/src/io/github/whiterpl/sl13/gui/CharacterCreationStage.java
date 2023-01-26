@@ -172,4 +172,19 @@ public class CharacterCreationStage extends Stage {
             }
         }
     }
+
+    public void resetAll() {
+        String randomName = MobGenerator.getRandomHumanName();
+        nameLabel.setText(String.format("[#f2ee02]Name[]: %s", randomName));
+
+        for (int category = 0; category < 3; category++) {
+            for (int skill = 0; skill < 3; skill++) {
+                skillTables[category].updateSkill(skill, (short) 0);
+            }
+        }
+
+        this.pointsToSpend = 36;
+
+        pointsLabel.setText(String.format("Points to spend: %2d", pointsToSpend));
+    }
 }
