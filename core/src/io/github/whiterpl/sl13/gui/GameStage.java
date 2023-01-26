@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import io.github.whiterpl.sl13.atoms.region.Region;
-import io.github.whiterpl.sl13.player.PlayerController;
 
 public class GameStage extends Stage {
     private GamePane gamePane;
@@ -25,16 +23,12 @@ public class GameStage extends Stage {
         rootTable.add(infoPane).expandX().height(Gdx.graphics.getHeight() - 10).fill().top().left().padLeft(5);
     }
 
-    public void updateGameScreen(Region acticeRegion, int x, int y) {
-        gamePane.updateGameScreen(acticeRegion, x, y);
+    public GamePane getGamePane() {
+        return gamePane;
     }
 
-    public void updateStats(PlayerController playerController) {
-        infoPane.updateStats(playerController);
-    }
-
-    public void appendMessage(String message) {
-        infoPane.appendMessage(message);
+    public InfoPane getInfoPane() {
+        return infoPane;
     }
 
 }
