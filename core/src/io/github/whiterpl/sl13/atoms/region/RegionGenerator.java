@@ -4,10 +4,13 @@ import io.github.whiterpl.sl13.Game;
 import io.github.whiterpl.sl13.atoms.Direction;
 import io.github.whiterpl.sl13.atoms.Status;
 import io.github.whiterpl.sl13.atoms.item.Item;
+import io.github.whiterpl.sl13.atoms.item.ItemGenerator;
 import io.github.whiterpl.sl13.atoms.item.Slot;
 import io.github.whiterpl.sl13.atoms.mob.Action;
 import io.github.whiterpl.sl13.atoms.mob.Mob;
+import io.github.whiterpl.sl13.atoms.mob.MobGenerator;
 import io.github.whiterpl.sl13.atoms.structure.Structure;
+import io.github.whiterpl.sl13.atoms.structure.StructureGenerator;
 
 import java.util.Random;
 
@@ -17,17 +20,15 @@ public class RegionGenerator {
 
     public static Region getBlankRegion() {
         Region region = new Region();
-        Structure wall = new Structure("Wall", "Wall", '#', "9e9baaff");
-        wall.addStatus(Status.BLOCK_PASSING);
 
         for (int x = 0; x < Region.WIDTH; x++) {
-            region.tiles[x][0].setStructure(wall);
-            region.tiles[x][Region.HEIGHT - 1].setStructure(wall);
+            region.tiles[x][0].setStructure(StructureGenerator.getWall());
+            region.tiles[x][Region.HEIGHT - 1].setStructure(StructureGenerator.getWall());
         }
 
         for (int y = 0; y < Region.HEIGHT; y++) {
-            region.tiles[0][y].setStructure(wall);
-            region.tiles[Region.WIDTH - 1][y].setStructure(wall);
+            region.tiles[0][y].setStructure(StructureGenerator.getWall());
+            region.tiles[Region.WIDTH - 1][y].setStructure(StructureGenerator.getWall());
         }
 
         return region;
@@ -79,9 +80,101 @@ public class RegionGenerator {
         return region;
     }
 
+    public static Region getStartingRegion() {
+        Region region = RegionGenerator.getBlankRegion();
+
+        Position startingRoom = RegionGenerator.placeRoom(region, 4, 4, 4, 25);
+
+        Game.getPlayerController().getPlayer().placeMob(region, startingRoom.x + 2, startingRoom.y + 2);
+
+        Position downStair = RegionGenerator.placeRoom(region, 4, 15, 4, 25);
+
+        while (downStair == null || Position.getDistance(startingRoom, downStair) < 30) {
+            downStair = RegionGenerator.placeRoom(region, 4, 15, 4, 25);
+        }
+
+        region.getTile(downStair.x + 1, downStair.y + 1).setStructure(StructureGenerator.getStairDown());
+
+        for (int i = 0; i < 40; i++) {
+            placeRoom(region, 6, 15, 4, 25);
+        }
+
+        for (int i = 0; i < 50; i++) {
+            placeWall(region, 4, 10, 25);
+        }
+
+        placeRandomMobs(region, 10, 1);
+
+        placeRandomItems(region, 5);
+
+        region.getTile(startingRoom).addItem(ItemGenerator.getRandomMelee());
+
+        return region;
+    }
+
+    public static Region generateRegion(Position upStair, int level, int turn) {
+        Region region = getBlankRegion();
+        region.lastUpdateTurn = turn;
+
+        region.getTile(upStair).setStructure(StructureGenerator.getStairUp());
+
+        Position downStair = RegionGenerator.placeRoom(region, 4, 15, 4, 25);
+
+        while (downStair == null || Position.getDistance(upStair, downStair) < 30) {
+            downStair = RegionGenerator.placeRoom(region, 4, 15, 4, 25);
+        }
+
+        region.getTile(downStair.x + 1, downStair.y + 1).setStructure(StructureGenerator.getStairDown());
+
+
+        for (int i = 0; i < 40; i++) {
+            placeRoom(region, 6, 15, 4, 25);
+        }
+
+        for (int i = 0; i < 50; i++) {
+            placeWall(region, 4, 10, 25);
+        }
+
+        placeRandomMobs(region, 10, level);
+
+        placeRandomItems(region, 5);
+
+        return region;
+    }
+
+    public static void placeRandomItems(Region region, int count) {
+        for (int i = 0; i < count; i++) {
+            while (true) {
+                int randomX = randomGen.nextInt(Region.WIDTH);
+                int randomY = randomGen.nextInt(Region.HEIGHT);
+
+                Tile spawn = region.getTile(randomX, randomY);
+
+                if (!spawn.hasStatus(Status.BLOCK_PASSING)) {
+                    region.getTile(randomX, randomY).addItem(ItemGenerator.getRandomMelee());
+                    break;
+                }
+            }
+        }
+    }
+
+    public static void placeRandomMobs(Region region, int count, int level) {
+        for (int i = 0; i < count; i++) {
+            while (true) {
+                int randomX = randomGen.nextInt(Region.WIDTH);
+                int randomY = randomGen.nextInt(Region.HEIGHT);
+
+                Tile spawn = region.getTile(randomX, randomY);
+
+                if (!spawn.hasStatus(Status.BLOCK_PASSING) && spawn.getMob() == null) {
+                    MobGenerator.getRandomAngryMob(level).placeMob(region, randomX, randomY);
+                    break;
+                }
+            }
+        }
+    }
+
     public static void placeWall(Region region, int minSize, int maxSize, int maxTries) {
-        Structure wall = new Structure("Wall", "Wall", '#', "9e9baaff");
-        wall.addStatus(Status.BLOCK_PASSING);
 
         for (int i = 0; i < maxTries; i++) {
 
@@ -121,20 +214,20 @@ public class RegionGenerator {
                 case 0:
                 case 1:
                     for (int iX = randomX; iX < randomX + width; iX++) {
-                        region.getTile(iX, randomY).setStructure(wall);
+                        region.getTile(iX, randomY).setStructure(StructureGenerator.getWall());
                     }
                     break;
                 case 2:
                 case 3:
                     for (int iY = randomY; iY < randomY + width; iY++) {
-                        region.getTile(randomX, iY).setStructure(wall);
+                        region.getTile(randomX, iY).setStructure(StructureGenerator.getWall());
                     }
                     break;
                 default:
                     for (int iX = randomX; iX < randomX + width; iX++) {
                         for (int iY = randomY; iY < randomY + width; iY++) {
                             if (iX == randomX + width/2 || iY == randomY + width/2) {
-                                region.getTile(iX, iY).setStructure(wall);
+                                region.getTile(iX, iY).setStructure(StructureGenerator.getWall());
                             }
                         }
                     }
@@ -147,16 +240,21 @@ public class RegionGenerator {
         }
     }
 
-    public static void placeRoom(Region region, int minSize, int maxSize, int maxDoors, int maxTries) {
-
-        Structure wall = new Structure("Wall", "Wall", '#', "9e9baaff");
-        wall.addStatus(Status.BLOCK_PASSING);
-
-        Structure door = new Structure("Door", "Door", '+', "9e9baafe");
+    public static Position placeRoom(Region region, int minSize, int maxSize, int maxDoors, int maxTries) {
 
         for (int i = 0; i < maxTries; i++) {
-            int width = randomGen.nextInt(maxSize - minSize) + minSize;
-            int height = randomGen.nextInt(maxSize - minSize) + minSize;
+
+            int width;
+            int height;
+
+            if (minSize == maxSize) {
+                width = minSize;
+                height = minSize;
+            } else {
+                width = randomGen.nextInt(maxSize - minSize) + minSize;
+                height = randomGen.nextInt(maxSize - minSize) + minSize;
+            }
+
 
             int randomX = randomGen.nextInt(Region.WIDTH - (width + 3)) + 3; // Pokoje mogą się generować tylko tak, żeby nie dotykać krawędzi regionu
             int randomY = randomGen.nextInt(Region.HEIGHT - (height + 3)) + 3;
@@ -183,20 +281,22 @@ public class RegionGenerator {
                 for (int iY = randomY - 1; iY < randomY + height + 2; iY++) {
                     if (iY == randomY - 1 || iY == randomY + height + 1 || iX == randomX - 1 || iX == randomX + width + 1) { //Sptawianie ścian i drzwi
                         if (doorNum > 0 && randomOffset <= 0 && !isCorner(iX, iY, randomX - 1, randomY - 1, randomX + width + 1, randomY + height + 1)) {
-                            region.getTile(iX, iY).setStructure(door);
+                            region.getTile(iX, iY).setStructure(StructureGenerator.getDoor());
                             randomOffset = doorOffset;
                             doorNum--;
                         } else {
-                            region.getTile(iX, iY).setStructure(wall);
+                            region.getTile(iX, iY).setStructure(StructureGenerator.getWall());
                             randomOffset--;
                         }
                     }
                 }
             }
 
-            return;
+            return new Position(randomX, randomY);
 
         }
+
+        return null;
     }
 
     private static boolean canPlaceStructure(Region region, int lX, int tY, int rX, int bY) {

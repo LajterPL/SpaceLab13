@@ -3,6 +3,7 @@ package io.github.whiterpl.sl13.gui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import io.github.whiterpl.sl13.Game;
 import io.github.whiterpl.sl13.controls.CharacterCreationController;
 import io.github.whiterpl.sl13.controls.GameController;
 import io.github.whiterpl.sl13.controls.MainMenuController;
@@ -42,9 +43,11 @@ public class StageSwapper {
                 Gdx.input.setInputProcessor(new CharacterCreationController(playerController, characterCreationStage, this));
                 break;
             case GAME:
+                Game.getInstance().startNewGame();
+                gameStage.getInfoPane().clearMessages();
                 gameStage.getInfoPane().updateStats(playerController);
                 gameStage.getGamePane().updateGameScreen(playerController.getActiveRegion(), playerController.getPlayer().getX(), playerController.getPlayer().getY());
-                Gdx.input.setInputProcessor(new GameController(playerController, gameStage, this));
+                Gdx.input.setInputProcessor(new GameController(gameStage, this));
                 break;
         }
     }

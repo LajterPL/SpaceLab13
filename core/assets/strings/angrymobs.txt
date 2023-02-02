@@ -1,0 +1,18 @@
+Rebelling Cleanbot;It wants you dead;C;669cf9;10;1;10
+Nanomachine Swarm;It wants you dead;S;b1c2d3;7;3;5
+Rebelling Cyborg;It wants you dead;C;fc3a43;12;6;20
+Alien Larva;It wants you dead;L;bf0ccc;3;1;10
+Alien Adult;It wants you dead;A;a122aa;6;3;20
+Alien Queen;It wants you dead;Q;aa2258;12;6;30
+Cannibal;It wants you dead;C;e2cbaa;10;2;20
+Zombie;It wants you dead;Z;54a356;12;3;25
+Blob;It wants you dead;B;eab135;20;10;100
+Slime;It wants you dead;B;72ea35;11;2;10
+Mutant;It wants you dead;M;7b35ea;9;3;10
+Space Carp;It wants you dead;C;6b82c6;11;1;5
+Space Shark;It wants you dead;S;6b82c6;9;4;10
+MineBot;It wants you dead;B;c1c0ac;11;3;15
+Malfunctioning Mech;It wants you dead;M;e5dd6b;15;5;25
+Rebelling Clone;It wants you dead;@;d183c0;10;2;10
+Tiger-Snake Hybrid;It wants you dead;M;ddae49;9;3;25
+Chimera;It looks like a dog, but can talk...;D;c9c0ad;11;3;10

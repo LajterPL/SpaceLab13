@@ -15,28 +15,15 @@ public class Action {
 
     private final Consumer<Mob> actionEvent;
 
+    public enum GenericAction {
+        ATTACK,
+        WALK_RANDOM
+    }
+
     public Action(int priority, Predicate<Mob> requirement, Consumer<Mob> action) {
         this.priority = priority;
         this.requirement = requirement;
         this.actionEvent = action;
-    }
-
-
-    public int getPriority() {
-        return priority;
-    }
-
-    public boolean isPossible(Mob mob) {
-        return this.requirement.test(mob);
-    }
-
-    public void execute(Mob mob) {
-        this.actionEvent.accept(mob);
-    }
-
-    public enum GenericAction {
-        ATTACK,
-        WALK_RANDOM
     }
 
     public Action(int priority, GenericAction type) {
@@ -67,7 +54,7 @@ public class Action {
                         mobMoved = m.move(Game.getPlayerController().getActiveRegion(), Direction.getRandomDirection());
                     }
                 };
-            break;
+                break;
             default:
                 this.requirement = null;
                 this.actionEvent = null;
@@ -102,4 +89,19 @@ public class Action {
                 this.actionEvent = null;
         }
     }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public boolean isPossible(Mob mob) {
+        return this.requirement.test(mob);
+    }
+
+    public void execute(Mob mob) {
+        this.actionEvent.accept(mob);
+    }
+
+
+
 }

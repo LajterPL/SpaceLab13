@@ -1,13 +1,12 @@
 package io.github.whiterpl.sl13.player;
 
-import io.github.whiterpl.sl13.atoms.item.Item;
+import io.github.whiterpl.sl13.Game;
+import io.github.whiterpl.sl13.atoms.Status;
 import io.github.whiterpl.sl13.atoms.mob.Mob;
 import io.github.whiterpl.sl13.atoms.mob.MobGenerator;
+import io.github.whiterpl.sl13.atoms.mob.Skill;
 import io.github.whiterpl.sl13.atoms.region.Region;
 import io.github.whiterpl.sl13.atoms.region.RegionGenerator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PlayerController {
 
@@ -19,11 +18,14 @@ public class PlayerController {
     protected int currentTurn;
 
     protected Region activeRegion;
+    private int regionLevel;
 
     public PlayerController() {
         this.player = new Mob("Player", "This is you.", '@', "FFFFFFFF");
-        this.activeRegion = RegionGenerator.getTestingRegion();
-        player.placeMob(activeRegion, 5, 5);
+        this.player.addStatus(Status.HUMAN);
+        this.player.setActionDelay(10);
+
+        regionLevel = 0;
     }
 
     public PlayerController(String name, short[] skills) {
@@ -36,12 +38,11 @@ public class PlayerController {
                 0,
                 (short) 1,
                 0,
-                skills,
-                new ArrayList<>()
+                skills
         );
     }
 
-    public PlayerController(String name, short maxHp, short currentHp, short maxSp, short currentSp, int credits, short characterLevel, int currentExp, short[] skills, List<Item> equipment) {
+    public PlayerController(String name, short maxHp, short currentHp, short maxSp, short currentSp, int credits, short characterLevel, int currentExp, short[] skills) {
         this();
         this.player.setName(name);
         this.player.setMaxHp(maxHp);
@@ -49,12 +50,10 @@ public class PlayerController {
         this.player.setMaxSp(maxSp);
         this.player.setCurrentSp(currentSp);
         this.player.setSkills(skills);
-        this.player.setEquipment(equipment);
         this.player.setCredits(credits);
 
         this.characterLevel = characterLevel;
         this.currentExp = currentExp;
-
     }
 
     public short getCharacterLevel() {
@@ -75,5 +74,44 @@ public class PlayerController {
 
     public Region getActiveRegion() {
         return activeRegion;
+    }
+
+    public void setActiveRegion(Region activeRegion) {
+        this.activeRegion = activeRegion;
+    }
+
+    //METHODS
+
+    public void goUp() {
+        if (regionLevel == 0) return;
+
+        activeRegion.removeFromQueue(player);
+        activeRegion.getTile(player.getPosition()).setMob(null);
+
+        regionLevel--;
+        activeRegion = Game.getLevels().get(regionLevel);
+
+        activeRegion.addToQueue(player);
+        activeRegion.advanceQueue();
+        activeRegion.getTile(player.getPosition()).setMob(player);
+    }
+
+    public void goDown() {
+
+        activeRegion.removeFromQueue(player);
+        activeRegion.getTile(player.getPosition()).setMob(null);
+
+        regionLevel++;
+
+        if (regionLevel == Game.getLevels().size()) {
+            Game.getLevels().add(RegionGenerator.generateRegion(player.getPosition(), regionLevel, player.getNextUpdateTurn()));
+        }
+
+        activeRegion = Game.getLevels().get(regionLevel);
+
+        activeRegion.addToQueue(player);
+        activeRegion.advanceQueue();
+        activeRegion.getTile(player.getPosition()).setMob(player);
+
     }
 }
