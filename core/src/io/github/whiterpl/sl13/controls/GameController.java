@@ -13,11 +13,9 @@ import io.github.whiterpl.sl13.atoms.region.Region;
 import io.github.whiterpl.sl13.atoms.region.Tile;
 import io.github.whiterpl.sl13.gui.GameStage;
 import io.github.whiterpl.sl13.gui.StageSwapper;
-import io.github.whiterpl.sl13.player.PlayerController;
 
 public class GameController implements InputProcessor {
-
-    private final PlayerController playerController;
+    
     private final GameStage gameStage;
     private final StageSwapper stageSwapper;
 
@@ -34,8 +32,7 @@ public class GameController implements InputProcessor {
         ATTACK
     }
 
-    public GameController(PlayerController playerController, GameStage gameStage, StageSwapper stageSwapper) {
-        this.playerController = playerController;
+    public GameController(GameStage gameStage, StageSwapper stageSwapper) {
         this.gameStage = gameStage;
         this.stageSwapper = stageSwapper;
         this.currentPrompt = Prompt.NONE;
@@ -54,8 +51,8 @@ public class GameController implements InputProcessor {
             case Input.Keys.ESCAPE:
                 if (currentPrompt == Prompt.LOOK || currentPrompt == Prompt.ATTACK) {
                     currentPrompt = Prompt.NONE;
-                    gameStage.getGamePane().updateGameScreen(playerController.getActiveRegion(), playerController.getPlayer().getX(), playerController.getPlayer().getY());
-                    gameStage.getInfoPane().updateStats(playerController);
+                    gameStage.getGamePane().updateGameScreen(Game.getPlayerController().getActiveRegion(), Game.getPlayerController().getPlayer().getX(), Game.getPlayerController().getPlayer().getY());
+                    gameStage.getInfoPane().updateStats(Game.getPlayerController());
                     return true;
                 }
                 break;
@@ -151,6 +148,12 @@ public class GameController implements InputProcessor {
             case '.':
                 pickItem();
                 return true;
+            case '>':
+                goDown();
+                return true;
+            case '<':
+                goUp();
+                return true;
             case '?':
                 showHelp();
                 return true;
@@ -186,10 +189,6 @@ public class GameController implements InputProcessor {
 
     // GETTERS & SETTERS
 
-    public PlayerController getPlayerController() {
-        return playerController;
-    }
-
     public GameStage getGameStage() {
         return gameStage;
     }
@@ -207,9 +206,9 @@ public class GameController implements InputProcessor {
         gameStage.getInfoPane().appendMessage("i - show inventory");
         gameStage.getInfoPane().appendMessage("w - wear/wield item");
         gameStage.getInfoPane().appendMessage("d - drop item");
-        gameStage.getInfoPane().appendMessage("f - fire ranged weapon");
-        gameStage.getInfoPane().appendMessage("u - use item");
         gameStage.getInfoPane().appendMessage(". - pick up item");
+        gameStage.getInfoPane().appendMessage("< - go down");
+        gameStage.getInfoPane().appendMessage("> - go up");
         gameStage.getInfoPane().appendMessage("");
     }
 
@@ -217,18 +216,29 @@ public class GameController implements InputProcessor {
 
         boolean result = true;
 
-        Tile walkedOnTile = playerController
+        Tile walkedOnTile = Game.getPlayerController()
                 .getActiveRegion()
-                .getTile(playerController.player.getX() + direction.getXMod(), playerController.getPlayer().getY() + direction.getYMod());
+                .getTile(Game.getPlayerController().player.getX() + direction.getXMod(), Game.getPlayerController().getPlayer().getY() + direction.getYMod());
 
         if (walkedOnTile.getMob() != null) {
-            if (!walkedOnTile.getMob().hasStatus(Status.FRIENDLY) && walkedOnTile.getMob() != playerController.getPlayer()) {
+            if (!walkedOnTile.getMob().hasStatus(Status.FRIENDLY) && walkedOnTile.getMob() != Game.getPlayerController().getPlayer()) {
                 attack(direction);
                 return true;
             }
         }
 
-        if (!playerController.getPlayer().move(playerController.getActiveRegion(), direction)) {
+        if(walkedOnTile.hasStatus(Status.BLOCK_PASSING)) {
+            if(walkedOnTile.getStructure() != null && walkedOnTile.getStructure().hasInteraction()) {
+                walkedOnTile.getStructure().interact(Game.getPlayerController().getPlayer());
+
+                Game.getPlayerController().getActiveRegion().advanceQueue();
+                gameStage.getGamePane().updateGameScreen(Game.getPlayerController().getActiveRegion(), Game.getPlayerController().getPlayer().getX(), Game.getPlayerController().getPlayer().getY());
+                gameStage.getInfoPane().updateStats(Game.getPlayerController());
+                return true;
+            }
+        }
+
+        if (!Game.getPlayerController().getPlayer().move(Game.getPlayerController().getActiveRegion(), direction)) {
             gameStage.getInfoPane().appendMessage("[#FF0000]Something blocks your path![]");
             result = false;
         }
@@ -250,11 +260,11 @@ public class GameController implements InputProcessor {
                 gameStage.getInfoPane().appendMessage(sb.toString());
             }
 
-            playerController.getActiveRegion().advanceQueue(playerController);
+            Game.getPlayerController().getActiveRegion().advanceQueue();
         }
 
-        gameStage.getGamePane().updateGameScreen(playerController.getActiveRegion(), playerController.getPlayer().getX(), playerController.getPlayer().getY());
-        gameStage.getInfoPane().updateStats(playerController);
+        gameStage.getGamePane().updateGameScreen(Game.getPlayerController().getActiveRegion(), Game.getPlayerController().getPlayer().getX(), Game.getPlayerController().getPlayer().getY());
+        gameStage.getInfoPane().updateStats(Game.getPlayerController());
 
         return result;
     }
@@ -268,13 +278,13 @@ public class GameController implements InputProcessor {
 
         int weightSum = 0;
 
-        for (Item item : playerController.getPlayer().getEquipment().getAllItems()) {
+        for (Item item : Game.getPlayerController().getPlayer().getEquipment().getAllItems()) {
 
             sb.append(i);
             sb.append(" - ");
             sb.append(String.format("%-25s", item.getName()));
 
-            if (playerController.getPlayer().getEquipment().getWornItems().containsValue(item)) {
+            if (Game.getPlayerController().getPlayer().getEquipment().getWornItems().containsValue(item)) {
                 sb.append(" (worn)");
             } else sb.append("       ");
 
@@ -288,13 +298,13 @@ public class GameController implements InputProcessor {
             sb = new StringBuilder();
         }
 
-        gameStage.getInfoPane().appendMessage(String.format("%3d/%-3d kg", weightSum, MobGenerator.calculateMaxWeightLimit(playerController.getPlayer().getSkills()[Skill.STRENGTH.getIndex()])));
+        gameStage.getInfoPane().appendMessage(String.format("%3d/%-3d", weightSum, MobGenerator.calculateMaxWeightLimit(Game.getPlayerController().getPlayer().getSkills()[Skill.STRENGTH.getIndex()])));
         gameStage.getInfoPane().appendMessage("");
     }
 
     private void wearItem() {
 
-        if (playerController.getPlayer().getEquipment().getAllItems().isEmpty()) {
+        if (Game.getPlayerController().getPlayer().getEquipment().getAllItems().isEmpty()) {
             gameStage.getInfoPane().appendMessage("You have nothing to wear.");
             return;
         }
@@ -305,10 +315,10 @@ public class GameController implements InputProcessor {
 
         char i = 'a';
 
-        for (Item item : playerController.getPlayer().getEquipment().getAllItems()) {
+        for (Item item : Game.getPlayerController().getPlayer().getEquipment().getAllItems()) {
             if (item.getUsageSlots().stream()
                     .filter(slot -> slot != Slot.BACKPACK)
-                    .anyMatch(slot -> !playerController.player.getEquipment().getWornItems().containsValue(item))) {
+                    .anyMatch(slot -> !Game.getPlayerController().player.getEquipment().getWornItems().containsValue(item))) {
                 sb.append(i);
             }
 
@@ -329,16 +339,16 @@ public class GameController implements InputProcessor {
     private void wearItem(char c) {
         char i = 'a';
 
-        for (Item item : playerController.getPlayer().getEquipment().getAllItems()) {
+        for (Item item : Game.getPlayerController().getPlayer().getEquipment().getAllItems()) {
 
             if (i == c) {
-                playerController.getPlayer().getEquipment().wearItem(playerController.getPlayer(), item);
+                Game.getPlayerController().getPlayer().getEquipment().wearItem(Game.getPlayerController().getPlayer(), item);
                 gameStage.getInfoPane().appendMessage(String.format("You put on the %s", item.getName()));
                 currentPrompt = Prompt.NONE;
 
-                playerController.getActiveRegion().advanceQueue(playerController);
-                gameStage.getGamePane().updateGameScreen(playerController.getActiveRegion(), playerController.getPlayer().getX(), playerController.getPlayer().getY());
-                gameStage.getInfoPane().updateStats(playerController);
+                Game.getPlayerController().getActiveRegion().advanceQueue();
+                gameStage.getGamePane().updateGameScreen(Game.getPlayerController().getActiveRegion(), Game.getPlayerController().getPlayer().getX(), Game.getPlayerController().getPlayer().getY());
+                gameStage.getInfoPane().updateStats(Game.getPlayerController());
                 return;
             }
 
@@ -352,7 +362,7 @@ public class GameController implements InputProcessor {
     private void dropItem() {
         gameStage.getInfoPane().hideMessages();
 
-        if (playerController.getPlayer().getEquipment().getAllItems().isEmpty()) {
+        if (Game.getPlayerController().getPlayer().getEquipment().getAllItems().isEmpty()) {
             gameStage.getInfoPane().appendMessage("You have nothing to drop.");
             return;
         }
@@ -363,7 +373,7 @@ public class GameController implements InputProcessor {
 
         char i = 'a';
 
-        for (Item item : playerController.getPlayer().getEquipment().getAllItems()) {
+        for (Item item : Game.getPlayerController().getPlayer().getEquipment().getAllItems()) {
             if (item.getLegalSlots().stream().anyMatch(slot -> slot != Slot.BACKPACK)) {
                 sb.append(i);
             }
@@ -381,10 +391,10 @@ public class GameController implements InputProcessor {
     private void dropItem(char c) {
         char i = 'a';
 
-        for (Item item : playerController.getPlayer().getEquipment().getAllItems()) {
+        for (Item item : Game.getPlayerController().getPlayer().getEquipment().getAllItems()) {
 
             if (i == c) {
-                playerController.getPlayer()
+                Game.getPlayerController().getPlayer()
                         .getEquipment()
                         .dropItem(
                                 Game.getPlayerController()
@@ -404,7 +414,7 @@ public class GameController implements InputProcessor {
     }
 
     private void pickItem() {
-        Tile pickTile = playerController.getActiveRegion().getTile(playerController.getPlayer().getPosition());
+        Tile pickTile = Game.getPlayerController().getActiveRegion().getTile(Game.getPlayerController().getPlayer().getPosition());
 
         if (pickTile.getItems().isEmpty()) {
             gameStage.getInfoPane().appendMessage("There is nothing to pick up.");
@@ -412,13 +422,13 @@ public class GameController implements InputProcessor {
         }
 
         if (pickTile.getItems().size() == 1) {
-            if (playerController.getPlayer().getEquipment().takeItem(playerController.player, pickTile.getItems().get(0))) {
+            if (Game.getPlayerController().getPlayer().getEquipment().takeItem(Game.getPlayerController().player, pickTile.getItems().get(0))) {
                 gameStage.getInfoPane().appendMessage(String.format("You picked up the %s", pickTile.getItems().get(0).getName()));
                 pickTile.getItems().remove(0);
 
-                playerController.getActiveRegion().advanceQueue(playerController);
-                gameStage.getGamePane().updateGameScreen(playerController.getActiveRegion(), playerController.getPlayer().getX(), playerController.getPlayer().getY());
-                gameStage.getInfoPane().updateStats(playerController);
+                Game.getPlayerController().getActiveRegion().advanceQueue();
+                gameStage.getGamePane().updateGameScreen(Game.getPlayerController().getActiveRegion(), Game.getPlayerController().getPlayer().getX(), Game.getPlayerController().getPlayer().getY());
+                gameStage.getInfoPane().updateStats(Game.getPlayerController());
                 return;
             }
 
@@ -450,22 +460,22 @@ public class GameController implements InputProcessor {
     }
 
     private void pickItem(char c) {
-        Tile pickTile = playerController.getActiveRegion().getTile(playerController.getPlayer().getPosition());
+        Tile pickTile = Game.getPlayerController().getActiveRegion().getTile(Game.getPlayerController().getPlayer().getPosition());
 
         char i = 'a';
 
         for (Item item : pickTile.getItems()) {
 
             if (i == c) {
-                if (playerController.getPlayer().getEquipment().takeItem(playerController.player, item)) {
+                if (Game.getPlayerController().getPlayer().getEquipment().takeItem(Game.getPlayerController().player, item)) {
                     currentPrompt = Prompt.NONE;
                     gameStage.getInfoPane().showMessages();
                     gameStage.getInfoPane().appendMessage(String.format("You picked up the %s", item.getName()));
                     pickTile.removeItem(item);
 
-                    playerController.getActiveRegion().advanceQueue(playerController);
-                    gameStage.getGamePane().updateGameScreen(playerController.getActiveRegion(), playerController.getPlayer().getX(), playerController.getPlayer().getY());
-                    gameStage.getInfoPane().updateStats(playerController);
+                    Game.getPlayerController().getActiveRegion().advanceQueue();
+                    gameStage.getGamePane().updateGameScreen(Game.getPlayerController().getActiveRegion(), Game.getPlayerController().getPlayer().getX(), Game.getPlayerController().getPlayer().getY());
+                    gameStage.getInfoPane().updateStats(Game.getPlayerController());
                     return;
                 }
 
@@ -483,8 +493,8 @@ public class GameController implements InputProcessor {
     }
 
     private void look() {
-        lookX = playerController.getPlayer().getX();
-        lookY = playerController.getPlayer().getY();
+        lookX = Game.getPlayerController().getPlayer().getX();
+        lookY = Game.getPlayerController().getPlayer().getY();
 
         currentPrompt = Prompt.LOOK;
     }
@@ -499,8 +509,8 @@ public class GameController implements InputProcessor {
         lookY = Math.max(lookY, 0);
         lookY = Math.min(lookY, Region.HEIGHT);
 
-        gameStage.getGamePane().updateGameScreen(playerController.getActiveRegion(), lookX, lookY);
-        gameStage.getInfoPane().updateStats(playerController);
+        gameStage.getGamePane().updateGameScreen(Game.getPlayerController().getActiveRegion(), lookX, lookY);
+        gameStage.getInfoPane().updateStats(Game.getPlayerController());
     }
 
     private void attack() {
@@ -511,14 +521,46 @@ public class GameController implements InputProcessor {
     }
 
     private void attack(Direction direction) {
-        playerController.getPlayer().attackMelee(playerController.getActiveRegion(), direction);
+        Game.getPlayerController().getPlayer().attackMelee(Game.getPlayerController().getActiveRegion(), direction);
 
-        playerController.getActiveRegion().advanceQueue(playerController);
+        Game.getPlayerController().getActiveRegion().advanceQueue();
 
-        gameStage.getGamePane().updateGameScreen(playerController.getActiveRegion(), playerController.getPlayer().getX(), playerController.getPlayer().getY());
-        gameStage.getInfoPane().updateStats(playerController);
+        gameStage.getGamePane().updateGameScreen(Game.getPlayerController().getActiveRegion(), Game.getPlayerController().getPlayer().getX(), Game.getPlayerController().getPlayer().getY());
+        gameStage.getInfoPane().updateStats(Game.getPlayerController());
 
         currentPrompt = Prompt.NONE;
+    }
+
+    private void goDown() {
+        if(Game.getPlayerController().getPlayer().hasStatus(Status.PARALYZED)) return;
+
+        Tile downTile = Game.getPlayerController().getActiveRegion().getTile(Game.getPlayerController().getPlayer().getPosition());
+
+        if(downTile.getStructure() != null && downTile.getStructure().getSymbol() == '>') {
+            Game.getPlayerController().goDown();
+            Game.getInfoPane().appendMessage("[#f2ee02]You go down the stairs[]");
+        } else {
+            Game.getInfoPane().appendMessage("[#FF0000]You can't go down here![]");
+        }
+
+        gameStage.getGamePane().updateGameScreen(Game.getPlayerController().getActiveRegion(), Game.getPlayerController().getPlayer().getX(), Game.getPlayerController().getPlayer().getY());
+        gameStage.getInfoPane().updateStats(Game.getPlayerController());
+    }
+
+    private void goUp() {
+        if(Game.getPlayerController().getPlayer().hasStatus(Status.PARALYZED)) return;
+
+        Tile upTile = Game.getPlayerController().getActiveRegion().getTile(Game.getPlayerController().getPlayer().getPosition());
+
+        if(upTile.getStructure() != null && upTile.getStructure().getSymbol() == '<') {
+            Game.getPlayerController().goUp();
+            Game.getInfoPane().appendMessage("[#f2ee02]You go up the stairs[]");
+        } else {
+            Game.getInfoPane().appendMessage("[#FF0000]You can't go up here![]");
+        }
+
+        gameStage.getGamePane().updateGameScreen(Game.getPlayerController().getActiveRegion(), Game.getPlayerController().getPlayer().getX(), Game.getPlayerController().getPlayer().getY());
+        gameStage.getInfoPane().updateStats(Game.getPlayerController());
     }
 
 }
