@@ -92,6 +92,7 @@ public class PlayerController {
         activeRegion = Game.getLevels().get(regionLevel);
 
         activeRegion.addToQueue(player);
+
         activeRegion.advanceQueue();
         activeRegion.getTile(player.getPosition()).setMob(player);
     }

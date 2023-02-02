@@ -2,8 +2,6 @@ package io.github.whiterpl.sl13.atoms.region;
 
 import io.github.whiterpl.sl13.Game;
 import io.github.whiterpl.sl13.atoms.mob.Mob;
-import io.github.whiterpl.sl13.gui.StageSwapper;
-import io.github.whiterpl.sl13.player.PlayerController;
 
 import java.util.Comparator;
 import java.util.PriorityQueue;
@@ -68,6 +66,7 @@ public class Region {
 
             Mob activeMob = actionQueue.peek();
             assert activeMob != null;
+            this.lastUpdateTurn = activeMob.getNextUpdateTurn();
             activeMob.addDelay();
             actionQueue.poll().act(Game.getPlayerController());
             actionQueue.add(activeMob);
@@ -85,4 +84,6 @@ public class Region {
     }
 
     public void setLastUpdateTurn(int turn) {this.lastUpdateTurn = turn;}
+
+    public int getLastUpdateTurn() {return  this.lastUpdateTurn;}
 }
