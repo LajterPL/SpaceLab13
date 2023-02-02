@@ -1,6 +1,8 @@
 package io.github.whiterpl.sl13.atoms.region;
 
+import io.github.whiterpl.sl13.Game;
 import io.github.whiterpl.sl13.atoms.mob.Mob;
+import io.github.whiterpl.sl13.gui.StageSwapper;
 import io.github.whiterpl.sl13.player.PlayerController;
 
 import java.util.Comparator;
@@ -8,7 +10,7 @@ import java.util.PriorityQueue;
 
 public class Region {
     public static final int WIDTH = 100;
-    public static final int HEIGHT = 100;
+    public static final int HEIGHT = 50;
 
     protected Tile[][] tiles;
 
@@ -47,27 +49,40 @@ public class Region {
         } else return null;
     }
 
+    public Tile getTile(Position pos) {
+        return getTile(pos.x, pos.y);
+    }
+
     public void addToQueue(Mob mob) {
         mob.setNextUpdateTurn(this.lastUpdateTurn + mob.getActionDelay());
         actionQueue.add(mob);
     }
 
-    public void advanceQueue(PlayerController playerController) {
+    public void advanceQueue() {
 
-        while(actionQueue.peek() != playerController.player) {
+        if (!actionQueue.contains(Game.getPlayerController().getPlayer())) {
+            return;
+        }
+
+        while(actionQueue.peek() != Game.getPlayerController().getPlayer()) {
+
             Mob activeMob = actionQueue.peek();
             assert activeMob != null;
             activeMob.addDelay();
-            actionQueue.poll().act(this);
+            actionQueue.poll().act(Game.getPlayerController());
             actionQueue.add(activeMob);
         }
 
+
+
         actionQueue.poll();
-        playerController.getPlayer().addDelay();
-        actionQueue.add(playerController.getPlayer());
+        Game.getPlayerController().getPlayer().addDelay();
+        actionQueue.add(Game.getPlayerController().getPlayer());
     }
 
+    public void removeFromQueue(Mob mob) {
+        this.actionQueue.remove(mob);
+    }
 
-
-
+    public void setLastUpdateTurn(int turn) {this.lastUpdateTurn = turn;}
 }
