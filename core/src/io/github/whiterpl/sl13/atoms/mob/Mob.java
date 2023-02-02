@@ -74,6 +74,28 @@ public class Mob extends Atom {
         this(name, description, symbol, colorString, 20, 10);
     }
 
+    public Mob(Mob copy) {
+        this.name = copy.name;
+        this.description = copy.description;
+        this.symbol = copy.symbol;
+        this.colorString = copy.colorString;
+
+        this.equipment = copy.equipment;
+        this.skills = copy.skills;
+        this.detectionRange = copy.detectionRange;
+        this.actionDelay = copy.actionDelay;
+        this.actionManager = copy.actionManager;
+        this.baseDmg = copy.baseDmg;
+        this.position = new Position();
+
+        this.maxHp = copy.maxHp;
+        this.currentHp = copy.currentHp;
+
+        this.weaponMod = 0;
+        this.armorMod = 0;
+        this.attackVerb = "attacks";
+    }
+
     // GETTERS & SETTERS
 
     public short getMaxHp() {
@@ -196,6 +218,10 @@ public class Mob extends Atom {
         this.detectionRange = detectionRange;
     }
 
+    public void setBaseDmg(int baseDmg) {
+        this.baseDmg = baseDmg;
+    }
+
     // METHODS
 
     public boolean placeMob(Region region, int x, int y) {
@@ -254,6 +280,11 @@ public class Mob extends Atom {
 
         if (selectedTile.getMob() != null) {
 
+            if (MobGenerator.attackMiss(this.skills[Skill.MELEE.getIndex()])) {
+                Game.getInfoPane().appendMessage(String.format("[#FF0000]%s misses %s[]", this.name, selectedTile.getMob().name));
+                return true;
+            }
+
             attackVerb = "attacks"; //Jeśli nie ma broni, używa domyślnego attackVerba
             weaponMod = 0;          //I zeruje weaponMod
 
@@ -296,6 +327,11 @@ public class Mob extends Atom {
         if (this.currentHp <= 0) {
             Game.getInfoPane().appendMessage(String.format("[#a52100FF]%s dies[]", this.name));
 
+            if (this.equals(Game.getPlayerController().getPlayer())) {
+                Game.getStageSwapper().changeStage(StageSwapper.State.MAIN_MENU);
+                return false;
+            }
+
             Tile deathTile = Game.getPlayerController().getActiveRegion().getTile(this.getX(), this.getY());
 
             while (this.equipment.getAllItems().size() > 0) {
@@ -306,10 +342,6 @@ public class Mob extends Atom {
 
             region.removeFromQueue(this);
 
-            if (this.equals(Game.getPlayerController().getPlayer())) {
-                Game.getStageSwapper().changeStage(StageSwapper.State.MAIN_MENU);
-            }
-
         }
 
         return true;
@@ -317,6 +349,7 @@ public class Mob extends Atom {
 
     public void act(PlayerController playerController) {
         List<Action> possibleActions = actionManager.getPossibleActions(this);
+
 
         possibleActions.stream()
                 .max((a, b) -> -Integer.max(a.getPriority(), b.getPriority()))

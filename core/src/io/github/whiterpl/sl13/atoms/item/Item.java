@@ -13,7 +13,6 @@ public class Item extends Atom {
     private Set<Slot> usageSlots;
     private Action usageAction;
     private Action wearAction;
-    private Action unwearAction;
     private int weight;
 
     public Item(String name, String description, char symbol, String colorString, Status... statuses) {
@@ -28,6 +27,20 @@ public class Item extends Atom {
         this.legalSlots = new HashSet<>();
         this.usageSlots = new HashSet<>();
         this.weight = 0;
+    }
+
+    public Item(Item copy) {
+        super(copy.name, copy.description, copy.symbol, copy.colorString);
+
+        this.legalSlots = new HashSet<>();
+        this.usageSlots = new HashSet<>();
+
+        copy.getLegalSlots().forEach(this::addLegalSlot);
+        copy.getUsageSlots().forEach(this::addUsageSlot);
+
+        this.usageAction = copy.getUsageAction();
+        this.wearAction = copy.wearAction;
+        this.weight = copy.weight;
     }
 
     // GETTERS AND SETTERS
@@ -70,14 +83,6 @@ public class Item extends Atom {
 
     public void setWearAction(Action wearAction) {
         this.wearAction = wearAction;
-    }
-
-    public Action getUnwearAction() {
-        return unwearAction;
-    }
-
-    public void setUnwearAction(Action unwearAction) {
-        this.unwearAction = unwearAction;
     }
 
     public int getWeight() {
