@@ -45,6 +45,10 @@ public class Atom {
         return symbol;
     }
 
+    public void setSymbol(char symbol) {
+        this.symbol = symbol;
+    }
+
     public String getColorString() {
         return colorString;
     }
